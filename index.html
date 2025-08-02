@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kinder NDE R Collections - Fantasmini (1996)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #0a0a0a;
+            color: #00ffff;
+            line-height: 1.6;
+            touch-action: manipulation;
+        }
+
+        /* Header Mobile */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem;
+            background-color: #0a0a0a;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .logo {
+            font-size: 1.5rem; /* Aumentato da 1.1rem */
+            font-weight: bold;
+            color: #00ffff;
+            text-decoration: none;
+            white-space: normal;
+            word-break: break-word;
+            max-width: 80%;
+            text-align: center;
+            margin: 0 auto;
+            line-height: 1.3;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .logo:active {
+            opacity: 0.7;
+            transform: scale(0.98);
+        }
+
+        /* Menu Mobile */
+        .menu-toggle {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 28px;
+            height: 20px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .hamburger {
+            width: 100%;
+            height: 2px;
+            background-color: #00ffff;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle.active .hamburger:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        .menu-toggle.active .hamburger:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active .hamburger:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background-color: #0a0a0a;
+            border-left: 1px solid #00ffff;
+            padding: 5rem 1rem 1rem;
+            z-index: 999;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .nav-menu.active {
+            right: 0;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 1rem;
+            color: #00ffff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            font-size: 1.1rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .nav-item:active {
+            background-color: rgba(0, 255, 255, 0.1);
+        }
+
+        /* Contenuto principale */
+        .main-content {
+            margin-top: 70px;
+            padding: 1rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            scroll-margin-top: 70px;
+        }
+
+        /* Galleria Minimalista */
+        .gallery-container {
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery {
+            width: 100%;
+            height: 65vh;
+            min-height: 300px;
+            max-height: 500px;
+            position: relative;
+        }
+
+        .gallery-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .gallery-slide.active {
+            opacity: 1;
+        }
+
+        .gallery-slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            image-rendering: optimizeQuality;
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #00ffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            z-index: 10;
+        }
+
+        .gallery-controls {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #00ffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 1.2rem;
+            user-select: none;
+            transition: transform 0.1s ease, background-color 0.2s ease;
+        }
+
+        .gallery-controls:active {
+            transform: translateY(-50%) scale(0.85);
+            background-color: rgba(0, 255, 255, 0.2);
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        .gallery-progress {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85%;
+            height: 3px;
+            background-color: rgba(0, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: #00ffff;
+            transition: width 0.1s linear;
+        }
+
+        /* Aree touch per swipe */
+        .gallery-touch-area {
+            position: absolute;
+            top: 0;
+            width: 30%;
+            height: 100%;
+            z-index: 5;
+        }
+
+        .touch-prev {
+            left: 0;
+        }
+
+        .touch-next {
+            right: 0;
+        }
+
+        /* Pulsanti */
+        .btn-container {
+            text-align: center;
+            margin: 1.5rem 0;
+        }
+
+        .cyber-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            margin: 0.3rem;
+            background-color: transparent;
+            color: #00ffff;
+            border: 2px solid #00ffff;
+            text-decoration: none;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-btn:active {
+            transform: scale(0.92);
+            background-color: rgba(0, 255, 255, 0.2);
+        }
+
+        /* Pulsante Download migliorato */
+        .download-btn {
+            background-color: rgba(0, 255, 255, 0.1);
+            font-size: 1.3rem; /* Aumentato da 1.1rem */
+            padding: 1.2rem 2.5rem; /* Aumentato il padding */
+            font-weight: bold;
+            border-width: 3px; /* Bordo più spesso */
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3); /* Aggiunto glow effect */
+            transition: all 0.3s ease, transform 0.1s ease;
+        }
+
+        .download-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .download-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+            background-color: rgba(0, 255, 255, 0.3);
+        }
+
+        /* Effetto ripple per il pulsante */
+        .download-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .download-btn:focus:not(:active)::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+
+        /* Sezione risorse */
+        .resources-section {
+            width: 100%;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background-color: #0a0a0a;
+        }
+
+        .resources-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #00ffff;
+        }
+
+        .resources-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        /* Torna su */
+        .top-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .top-btn:active {
+            transform: scale(0.85);
+            background-color: rgba(0, 255, 255, 0.2);
+        }
+
+        /* Lightbox */
+        .cyber-lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.97);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .cyber-lightbox.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .cyber-lightbox-content {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            max-height: 80vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cyber-lightbox-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .cyber-lightbox-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            color: #00ffff;
+            font-size: 1.8rem;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ffff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .cyber-lightbox-close:active {
+            transform: scale(0.9);
+        }
+
+        /* Versione desktop */
+        @media (min-width: 769px) {
+            .header {
+                padding: 1.5rem 2rem;
+            }
+            
+            .logo {
+                font-size: 2rem; /* Aumentato da 1.4rem */
+                max-width: none;
+            }
+            
+            .menu-toggle {
+                display: none;
+            }
+            
+            .nav-menu {
+                position: static;
+                width: auto;
+                height: auto;
+                background-color: transparent;
+                border-left: none;
+                padding: 0;
+                display: flex;
+                overflow-y: visible;
+            }
+            
+            .nav-item {
+                padding: 0.5rem 1.5rem; /* Aumentato il padding */
+                border-bottom: none;
+                font-size: 1.1rem; /* Aumentato da 1rem */
+                border-radius: 4px;
+                margin-left: 0.5rem;
+            }
+            
+            .nav-item:hover {
+                background-color: rgba(0, 255, 255, 0.1);
+            }
+            
+            .main-content {
+                margin-top: 90px; /* Aumentato da 80px */
+                padding: 2rem;
+            }
+            
+            .gallery {
+                height: 70vh;
+                min-height: 500px;
+                max-height: none;
+            }
+            
+            .gallery-controls {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .resources-grid {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .cyber-btn {
+                padding: 1rem 2rem;
+                margin: 0.5rem;
+            }
+            
+            .cyber-btn:hover {
+                background-color: rgba(0, 255, 255, 0.1);
+            }
+            
+            .download-btn:hover {
+                background-color: rgba(0, 255, 255, 0.2);
+                box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+            }
+            
+            .top-btn:hover {
+                background-color: rgba(0, 255, 255, 0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header con titolo completo -->
+    <header class="header">
+        <a href="#" class="logo">KINDER COLLECTIONS</a>
+        <div class="menu-toggle" id="menuToggle">
+            <div class="hamburger"></div>
+            <div class="hamburger"></div>
+            <div class="hamburger"></div>
+        </div>
+        <nav class="nav-menu" id="navMenu">
+            <a href="#gallery" class="nav-item">Galleria</a>
+            <a href="#download" class="nav-item">Download</a>
+            <a href="#resources" class="nav-item">Risorse</a>
+        </nav>
+    </header>
+
+    <!-- Contenuto principale -->
+    <main class="main-content">
+        <section id="gallery" class="section">
+            <div class="gallery-container">
+                <div class="gallery" id="gallery"></div>
+                <div class="slide-counter" id="slideCounter">1 / 36</div>
+                <div class="gallery-controls prev" id="prevBtn">❮</div>
+                <div class="gallery-controls next" id="nextBtn">❯</div>
+                <div class="gallery-progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <!-- Aree touch per swipe -->
+                <div class="gallery-touch-area touch-prev" id="touchPrev"></div>
+                <div class="gallery-touch-area touch-next" id="touchNext"></div>
+            </div>
+        </section>
+
+        <section id="download" class="section">
+            <div class="btn-container">
+                <a href="https://www.mediafire.com/file/mjkxw21bmffkw1r/Stickers+PDF.zip/file" 
+                   class="cyber-btn download-btn" 
+                   target="_blank" 
+                   rel="noopener noreferrer">DOWNLOAD</a>
+            </div>
+        </section>
+
+        <section id="resources" class="section">
+            <div class="resources-section">
+                <h2 class="resources-title">Risorse Utili</h2>
+                <div class="resources-grid">
+                    <a href="https://mrrearm.github.io/imagelayouta4" 
+                       class="cyber-btn" 
+                       target="_blank"
+                       rel="noopener noreferrer">Image Layout A4</a>
+                    <a href="https://mrrearm.github.io/texttoimage" 
+                       class="cyber-btn" 
+                       target="_blank"
+                       rel="noopener noreferrer">Text To Image</a>
+                    <a href="https://mrrearm.github.io/nexusimageprinter" 
+                       class="cyber-btn" 
+                       target="_blank"
+                       rel="noopener noreferrer">Nexus Image Printer</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Lightbox -->
+    <div class="cyber-lightbox" id="cyberLightbox">
+        <span class="cyber-lightbox-close">&times;</span>
+        <div class="cyber-lightbox-content">
+            <img id="lightbox-img" src="" alt="">
+        </div>
+    </div>
+
+    <div class="top-btn" id="topBtn">↑</div>
+
+    <script>
+        // Menu mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+        });
+
+        // Chiudi menu al click su link
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                menuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Torna su
+        const topBtn = document.getElementById('topBtn');
+        topBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Mostra/nascondi il pulsante "Torna su" in base allo scroll
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                topBtn.style.opacity = '1';
+                topBtn.style.visibility = 'visible';
+            } else {
+                topBtn.style.opacity = '0';
+                topBtn.style.visibility = 'hidden';
+            }
+        });
+
+        // Galleria Minimalista
+        let currentSlide = 0;
+        const totalSlides = 36;
+        let galleryInterval;
+        let progressInterval;
+        const slideDuration = 4000;
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        function createGallery() {
+            const gallery = document.getElementById('gallery');
+            
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.createElement('div');
+                slide.className = 'gallery-slide';
+                
+                const img = document.createElement('img');
+                img.src = `images/${i}.jpg`;
+                img.alt = `Fantasmini ${i}`;
+                img.loading = "lazy";
+                
+                img.onerror = function() {
+                    this.src = `images/${i}.png`;
+                };
+
+                slide.appendChild(img);
+                gallery.appendChild(slide);
+                
+                // Apri in lightbox al click
+                img.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    openLightbox(this.src);
+                });
+            }
+            
+            // Mostra la prima slide
+            document.querySelectorAll('.gallery-slide')[0].classList.add('active');
+        }
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.gallery-slide');
+            currentSlide = (n + totalSlides) % totalSlides;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            resetProgressBar();
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        function resetProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = '0%';
+            clearInterval(progressInterval);
+            
+            let width = 0;
+            const increment = 100 / (slideDuration / 50);
+            
+            progressInterval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(progressInterval);
+                } else {
+                    width += increment;
+                    progressBar.style.width = `${width}%`;
+                }
+            }, 50);
+        }
+
+        function startAutoSlide() {
+            galleryInterval = setInterval(() => {
+                nextSlide();
+            }, slideDuration);
+        }
+
+        function openLightbox(imgSrc) {
+            const lightbox = document.getElementById('cyberLightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            lightboxImg.src = imgSrc;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            clearInterval(galleryInterval);
+        }
+
+        function closeLightbox() {
+            document.getElementById('cyberLightbox').classList.remove('active');
+            document.body.style.overflow = '';
+            startAutoSlide();
+        }
+
+        // Gestione swipe per mobile
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const difference = touchStartX - touchEndX;
+            if (difference > 50) { // Swipe sinistro
+                clearIntervals();
+                nextSlide();
+                startAutoSlide();
+            } else if (difference < -50) { // Swipe destro
+                clearIntervals();
+                prevSlide();
+                startAutoSlide();
+            }
+        }
+
+        function clearIntervals() {
+            clearInterval(galleryInterval);
+            clearInterval(progressInterval);
+        }
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', () => {
+            createGallery();
+            startAutoSlide();
+            resetProgressBar();
+            
+            // Nascondi inizialmente il pulsante "Torna su"
+            topBtn.style.opacity = '0';
+            topBtn.style.visibility = 'hidden';
+            
+            // Eventi galleria
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                clearIntervals();
+                nextSlide();
+                startAutoSlide();
+            });
+            
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                clearIntervals();
+                prevSlide();
+                startAutoSlide();
+            });
+            
+            // Touch events
+            document.getElementById('touchNext').addEventListener('click', () => {
+                clearIntervals();
+                nextSlide();
+                startAutoSlide();
+            });
+            
+            document.getElementById('touchPrev').addEventListener('click', () => {
+                clearIntervals();
+                prevSlide();
+                startAutoSlide();
+            });
+            
+            // Swipe per mobile
+            const gallery = document.getElementById('gallery');
+            gallery.addEventListener('touchstart', handleTouchStart, {passive: true});
+            gallery.addEventListener('touchend', handleTouchEnd, {passive: true});
+            
+            // Pausa auto-scroll
+            gallery.addEventListener('mouseenter', clearIntervals);
+            gallery.addEventListener('touchstart', clearIntervals, {passive: true});
+            
+            // Riprendi auto-scroll
+            gallery.addEventListener('mouseleave', () => {
+                startAutoSlide();
+                resetProgressBar();
+            });
+            
+            // Lightbox
+            document.querySelector('.cyber-lightbox-close').addEventListener('click', closeLightbox);
+            document.getElementById('cyberLightbox').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeLightbox();
+                }
+            });
+            
+            // Chiudi lightbox con ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
